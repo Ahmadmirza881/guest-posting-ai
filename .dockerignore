@@ -1,0 +1,41 @@
+# Git and IDE
+.git
+.gitignore
+.vscode
+.idea
+
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+venv
+.venv
+backend/__pycache__
+backend/test_*.py
+
+# Environment variables & secrets
+.env
+.env.*
+backend/.env
+
+# Local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+backend/*.db
+
+# Build outputs (Stage 1 builds fresh)
+dist
+dist-ssr
+
+# Documentation & temporary logs
+*.log
+logs
+README.md
+DEPLOYMENT.md

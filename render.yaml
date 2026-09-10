@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: guest-posting-ai
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "False"
+      - key: PROJECT_NAME
+        value: "Guest Posting AI"
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SEARCH_PROVIDER
+        value: tavily
+      - key: SEARCH_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        value: "sqlite:///./guest_posting_ai.db"

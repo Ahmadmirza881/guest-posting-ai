@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guest_posting_ai_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - ENVIRONMENT=production
+      - DEBUG=False
+      - PROJECT_NAME=Guest Posting AI
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-change-this-to-a-very-long-and-secure-random-key-32-chars}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - SEARCH_PROVIDER=${SEARCH_PROVIDER:-tavily}
+      - SEARCH_API_KEY=${SEARCH_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - DATABASE_URL=sqlite:////app/data/guest_posting_ai.db
+    volumes:
+      - app_data:/app/data
+
+volumes:
+  app_data:
+    driver: local
