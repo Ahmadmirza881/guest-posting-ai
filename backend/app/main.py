@@ -93,6 +93,18 @@ app.include_router(searches_router, prefix=settings.API_PREFIX)
 app.include_router(websites_router, prefix=settings.API_PREFIX)
 
 
+@app.get("/api", tags=["Root"], summary="API Root Status")
+async def api_root_status():
+    return {
+        "service": settings.PROJECT_NAME,
+        "version": settings.PROJECT_VERSION,
+        "status": "online",
+        "docs": "/docs",
+        "health": f"{settings.API_PREFIX}/health",
+        "health_db": f"{settings.API_PREFIX}/health/db",
+    }
+
+
 # Static files & SPA Serving (Full-Stack single-service deployment)
 dist_dir = settings.FRONTEND_DIST_DIR
 index_file = dist_dir / "index.html"
