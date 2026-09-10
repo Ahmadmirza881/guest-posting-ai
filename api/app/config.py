@@ -26,10 +26,14 @@ class Settings:
     DEBUG: bool = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 
     # Database Configuration
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        "sqlite:///./guest_posting_ai.db"
-    )
+    @property
+    def DATABASE_URL(self) -> str:
+        env_url = os.getenv("DATABASE_URL")
+        if env_url:
+            return env_url
+        if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+            return "sqlite:////tmp/guest_posting_ai.db"
+        return "sqlite:///./guest_posting_ai.db"
 
     # Allowed CORS Origins
     _origins_raw: str = os.getenv(
