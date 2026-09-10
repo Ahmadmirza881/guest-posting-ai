@@ -60,7 +60,7 @@ const Search = () => {
         err.message.includes('connect');
       setError(
         isConnectionError
-          ? 'Unable to connect to the backend server (http://localhost:8000). Please make sure the FastAPI backend is running (run run-backend.bat).'
+          ? 'Unable to connect to the backend server. Please check your network and try again.'
           : err.message
       );
     } finally {

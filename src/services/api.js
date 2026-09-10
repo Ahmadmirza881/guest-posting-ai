@@ -124,7 +124,7 @@ async function request(endpoint, options = {}) {
       error.message?.includes('Failed to fetch')
     ) {
       throw new Error(
-        'Unable to connect to backend server (http://localhost:8000). Please make sure the FastAPI backend is running.'
+        'Unable to connect to backend server. Please check your internet connection and try again.'
       );
     }
     throw error;
