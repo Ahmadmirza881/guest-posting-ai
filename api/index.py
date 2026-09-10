@@ -7,10 +7,14 @@ import secrets
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("vercel_handler")
 
-# Set up paths so app package is importable
+# Add api directory to Python path
 API_DIR = Path(__file__).resolve().parent
 if str(API_DIR) not in sys.path:
     sys.path.insert(0, str(API_DIR))
+
+# Map 'app' to '_app' package so internal imports (e.g. from app.config import settings) resolve seamlessly
+import _app
+sys.modules["app"] = _app
 
 # Serverless environment overrides (writable /tmp directory)
 if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
@@ -20,7 +24,7 @@ if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
     os.environ.setdefault("JWT_SECRET_KEY", "guest-posting-ai-secure-vercel-prod-key-" + secrets.token_hex(16))
 
 try:
-    from app.main import app
+    from _app.main import app
 except Exception as e:
     import traceback
     logger.exception(f"FastAPI app import error on Vercel: {e}")
