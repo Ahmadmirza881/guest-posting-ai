@@ -1,44 +1,25 @@
 import os
 import sys
-import logging
 from pathlib import Path
 import secrets
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("vercel_handler")
-
-# Add api directory to Python path
+# Set up module resolution
 API_DIR = Path(__file__).resolve().parent
 if str(API_DIR) not in sys.path:
     sys.path.insert(0, str(API_DIR))
 
-# Map 'app' to '_app' package so internal imports (e.g. from app.config import settings) resolve seamlessly
 import _app
 sys.modules["app"] = _app
 
-# Serverless environment overrides (writable /tmp directory)
+# Vercel serverless environment defaults
 if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
     os.environ["DATABASE_URL"] = "sqlite:////tmp/guest_posting_ai.db"
     os.environ["ENVIRONMENT"] = "development"
     os.environ["DEBUG"] = "False"
     os.environ.setdefault("JWT_SECRET_KEY", "guest-posting-ai-secure-vercel-prod-key-" + secrets.token_hex(16))
 
-try:
-    from _app.main import app
-except Exception as e:
-    import traceback
-    logger.exception(f"FastAPI app import error on Vercel: {e}")
-    from fastapi import FastAPI
-    from fastapi.responses import JSONResponse
-    app = FastAPI()
+from _app.main import app
 
-    @app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE"])
-    async def error_fallback(path_name: str):
-        return JSONResponse(
-            status_code=500,
-            content={
-                "error": "FastAPI initialization failed on Vercel",
-                "message": str(e),
-                "traceback": traceback.format_exc()
-            }
-        )
+# Top-level entrypoints for Vercel AST parser
+app = app
+handler = app
