@@ -1,25 +1,28 @@
-import os
-import sys
-from pathlib import Path
-import secrets
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-# Set up module resolution
-API_DIR = Path(__file__).resolve().parent
-if str(API_DIR) not in sys.path:
-    sys.path.insert(0, str(API_DIR))
+app = FastAPI(title="Guest Posting AI API")
 
-import _app
-sys.modules["app"] = _app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Vercel serverless environment defaults
-if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
-    os.environ["DATABASE_URL"] = "sqlite:////tmp/guest_posting_ai.db"
-    os.environ["ENVIRONMENT"] = "development"
-    os.environ["DEBUG"] = "False"
-    os.environ.setdefault("JWT_SECRET_KEY", "guest-posting-ai-secure-vercel-prod-key-" + secrets.token_hex(16))
+@app.get("/api/health")
+def health_check():
+    return {
+        "status": "ok",
+        "service": "guest-posting-ai-backend",
+        "platform": "vercel-serverless"
+    }
 
-from _app.main import app
-
-# Top-level entrypoints for Vercel AST parser
-app = app
-handler = app
+@app.get("/api")
+def api_root():
+    return {
+        "service": "guest-posting-ai",
+        "status": "online",
+        "docs": "/docs"
+    }
